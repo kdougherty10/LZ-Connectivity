@@ -1,0 +1,562 @@
+##############################################################
+######## Update these values for your new environment ########
+##############################################################
+
+# Account/Subscription Configurations
+#10M-DCT
+#tenant_id: 6660b467-add3-4d9e-8ada-48b1721959f3
+#subscription_id: 5812a8ba-0c59-46ab-a3ed-a36b202a8534
+
+#Personal
+tenant_id: a7dcd46f-38eb-446c-9d97-3dc7d843f097
+subscription_id: 2b7d48e1-cf39-4fdd-bd70-79cd047eb146
+
+################################################################
+# Project Specific Configurations
+
+type: shs
+org:  prd
+locationtype: northcentralus
+nettype: connectivity
+hub: HUB 
+cloudtype: ADMIN
+fwtype: PALO
+trantype: transit
+addstype: ADDS
+service: CORE
+rg: rg
+location: NorthCentralus
+################################################################
+
+#KeyVault
+
+keyvault: shs-prd-us-northcentral
+enabled_for_disk_encryption: true
+sku_name: standard
+key_permissions1: get
+key_permissions2: list
+secret_permissions: list
+storage_permissions: list
+bypass: AzureServices
+default_action: Deny
+
+
+################################################################
+
+#NetworkSecurityGroup
+
+nsg-1: shs-prd-us-northcentral-ADDS-SUBNETNSG_10.205.0.128_26
+nsg-2: shs-prd-us-northcentral-ADMIN-SUBNETNSG_10.205.1.0_26
+nsg-3: shs-prd-us-northcentral-WAF-SUBNETNSG_10.205.1.128_26
+
+################################################################
+#Log Analytics
+
+loganalytics: shs-prd-us-northcentral-LA100
+lasku:  PerGB2018
+retention: 90
+
+workspaceKey: GT5KFBCAjOaXu2FQVBikRWWmj/t/4WpmJ7nNuI0GwzoAVXEA9g1dVRltRvCi+2pNDtVR3S//fCjYP91RTgeRTg==
+workspaceId: 2717bacf-3db4-4193-8d3d-a19fc2e7c12f
+
+#Solution Packs Information
+solution1: ADReplication
+solution2: AntiMalware
+solution3: AgentHealthAssessment
+solution4: Updates
+solution5: NetworkMonitoring
+solution6: KeyVaultAnalytics
+solution7: ServiceDesk
+solution8: AzureActivity
+publisher: Microsoft
+product1: OMSGallery/ADReplication
+product2: OMSGallery/AntiMalwareye
+product3: OMSGallery/AgentHealthAssessment
+product4: OMSGallery/Updates
+product5: OMSGallery/NetworkMonitoring
+product6: OMSGallery/KeyVaultAnalytics
+product7: OMSGallery/ServiceDesk
+product8: OMSGallery/AzureActivity
+
+################################################################
+
+#RecoveryServicesVault
+
+sku: Standard
+rsv: shs-prd-us-northcentral-RSV
+##############################################################
+
+#AzureFirewall
+
+azfirewallname: AZFIREWALL-CORP-CORE-USE500
+azfirewallpip: FWPIP-CORE-CORP-USE500
+ipallocation: Static
+azfirewallsku: Standard
+resource_enabled: true 
+ipconfig: azfirewallconfig
+
+##############################################################
+# Load Balancer
+
+lbpipname: LBPIP-CORE-CORP-USE500
+lballocation_method: Static
+lbname: LBPIP-CORE-CORP-USE
+lbfrontendipconfig: pipaddressuse
+
+##############################################################
+#Application Gateway
+
+appgwpipname: APPGW-PIP-CORE-USE500
+appgwallocation_method: Dynamic
+appgwname: APPGW-CORE-CORP-USE
+appgwsku: WAF_Medium
+appgwtier: WAF
+appgwcapacity: "1"
+gatewayipconfig: APPGWIPCONFIG-CORP-USE500
+appgwcookie_based_affinity: Disabled
+appgwbackendprotocol: Http
+appgwhttplistenerprotocol: Http
+rule_type: Basic
+
+###############################################################
+#EventHub
+
+eventhubnamespace: EVENTHUBSPACE-CORE-CORP-USE500
+eventhubsku: Standard
+eventhubcapacity: "1"
+eventhubname: EVENTHUB-CORE-CORP-USE500
+eventhubpartitioncount: "4"
+eventhubmessageretention: "7"
+
+###############################################################
+#Palo Altos
+
+palofirewall_prefix: 10.205.3.0/26
+firewall_mgmt_nsg_name: palo_nsg
+zone1_nsg_name: zone1nsg
+zone2_nsg_name: zone2nsg
+panmgmtsubnet: PALOMGMT-SHRDSVC-SNET-001_10.205.3.0_26
+panzone1subnet: PALOZONE1-SHRDSVC-SNET-001_10.205.3.62_26
+panzone2subnet: PALOZONE2-SHRDSVC-SNET-001_10.205.3.192_26
+
+
+################################################################
+########################### PALO ###############################
+#change the name of transit resource group name - then update all the variables
+
+#transit_vnet_name: test #This should just be the hub vnet
+firewall_mgmt_subnet_name: PALOMGMT-SHRDSVC-SNET-001_10.205.3.0_26  #pansubnet management/26
+#zone1_subnet_name: AZ-CUS-PALOZONE1-SHRDSVC-SNET-001_10.232.0.192_26 #/26  zone 1 - prod
+#zone2_subnet_name: AZ-CUS-PALOZONE2-SHRDSVC-SNET-001_10.232.1.0_26 #/6  zone 2 - non-prod
+
+#address space
+
+firewall_mgmt_address_space: 10.205.3.0/26 #10.232.0.65 - 10.232.0.126 /26
+firewall_mgmt_subnet_prefix: /26
+zone1_address_space: 10.205.3.128/26 #zone1 address space 10.232.0.193 - 10.232.0.254
+zone2_address_space: 10.205.3.192/26  #zone2 address space 10.232.1.1 - 10.232.1.62
+zone1_subnet_prefix: /26
+zone2_subnet_prefix: /26
+public_address_space: 8.0.0.0/8
+#storage acct diags
+#transit_diag_storage_acct_name:
+
+
+#firewall VM's 
+availability_set_name: AZ-CentralUS-INFR-SHRDSVC-PALO-AS
+firewall_vm_size: Standard_DS3_v2
+
+#added by Kyle
+
+
+firewall1_vm_name: AZVMPALOINF01
+firewall1_os_disk_account_name: azvmpaloinf01osdisk
+firewall1_vnic0_name: AZVMPALOINF01-NIC-0
+firewall1_vnic0_private_ip: 10.205.3.10
+firewall1_vnic1_name: AZVMPALOINF01-NIC-1
+firewall1_vnic1_private_ip: 10.205.3.201
+firewall1_vnic2_name: AZVMPALOINF01-NIC-2
+firewall1_vnic2_private_ip: 10.205.3.135  #problem
+
+
+firewall2_vm_name: AZVMPALOINF02
+firewall2_os_disk_account_name: azpaloinf02osdisk
+firewall2_vnic0_name: AZVMPALOINF02-NIC-0
+firewall2_vnic0_private_ip: 10.205.3.20
+firewall2_vnic1_name: AZVMPALOINF02-NIC-1
+firewall2_vnic1_private_ip: 10.205.3.202 #problem
+firewall2_vnic2_name: AZVMPALOINF02-NIC-2
+firewall2_vnic2_private_ip: 10.205.3.145
+
+
+firewall1_mgmt_public_ip_name: AZVMPALOINF01-MGMT-PIP
+firewall1_mgmt_domain_name_label: CRSDGvmpaloinf01-mgmt
+firewall2_mgmt_public_ip_name: AZVMPALOINF02-MGMT-PIP
+firewall2_mgmt_domain_name_label: CRSDGvmpaloinfo02-mgmt 
+
+#nsgs
+#firewall_mgmt_nsg_name: AZ-CUS-10.232.0.64_26-PALOMGMT-SHRDSVC-SNET-001-NSG 
+#zone1_nsg_name: AZ-CUS-10.232.0.192_26-PALOZONE1-SHRDSVC-SNET-001-NSG
+#zone2_nsg_name: AZ-CUS-10.232.1.0_26-PALOZONE2-SHRDSVC-SNET-001-NSG
+
+
+#zone 1 Loadbalancer
+zone1_lb_name: AZ-CUS-ZONE1-SHRDSVC-LB  #this was external_lb_name - changing to zone1
+zone1_lb_frontend_ip_name: az-CUS-zone1-shrdsvc-lb-ip
+zone1_lb_frontend_ip: 10.205.2.200
+zone1_lb_domain_name_label: az-CUS-zoneone-shrdsvc-lb-ip #az-CUS-zone1-shrdsvc
+zone1_lb_backend_pool_name: AZ-CUS-ZONE1-SHRDSVC-LB-POOL
+zone1_lb_backend_address_pool: AZ-CUS-ZONE1-SHRDSVC-LB-POOL
+
+
+#zone 2 Loadbalancer
+zone2_lb_name: AZ-CUS-ZONE2-SHRDSVC-LB #this was internal_lb_name - changing to zone2
+zone2_lb_frontend_ip_name: az-CUS-zone2-shrdsvc-lb-ip
+zone2_lb_frontend_ip: 10.205.3.200 #AZ-CUS-ZONE2-SHRDSVC
+zone2_lb_backend_address_pool: AZ-CUS-ZONE2-SHRDSVC-LB-POOL
+zone2_lb_backend_pool_name: AZ-CUS-ZONE2-SHRDSVC-LB-POOL
+
+
+
+firewall_sku: byol
+firewall_publisher: paloaltonetworks
+firewall_offer: vmseries1
+firewall_version: latest
+
+admin_username: admintest
+admin_password: s0wqLK0N5f0!
+
+
+
+################################################################
+
+# Networking
+
+netvnet: shs-prd-us-northcentral-vnet_10.205.0.0_22
+addsubnet: shs-prd-us-northcentral-ADD-SUBNET_10.205.0.0_26
+adminsubnet: shs-prd-us-northcentral-ADMIN-SUBNET_10.205.3.0_26
+kvsubnet: shs-prd-us-northcentral-KV-SUBNET_10.205.1.128_27
+webappfirewallsubnet: shs-prd-us-northcentral-WAF-SUBNET_10.205.1.128_26
+palofirewallsubnet: shs-prd-us-northcentral-PALO-SUBNET_10.205.3.0_26
+azurefirewallsubnet: AzureFirewallSubnet
+gatewaysubnet: GatewaySubnet
+azurestoragesubnet: AzureStorageSubnet
+address_space: ["10.205.0.0/22"]
+addsaddress_prefix:   10.205.0.0/26
+adminaddress_prefix:    10.205.3.0/26
+gatewaysubnet_prefix: 10.205.1.0/26
+azurefirewallsubnet_prefix: 10.205.0.64/26
+webappfirewall_prefix: 10.205.1.128/26
+kvaddress_prefix: 10.205.1.128/27
+azurestoragesubnet_prefix: 10.205.1.160/27
+
+
+lock: shs-prd-us-northcentral-HUB-VNET-001_10.205.0.0_22_LOCK
+lock_level: CanNotDelete
+notes: This resource group is shared, please confirm before deleting.
+
+#NetworkSecurityGroup - will need 2 of these for the subnets
+#vnet-1-subnet1-nsg: NSG-USE2-10.205.0.128_26-ADDS-CORE-CORP-SNET
+#vnet-1-subnet2-nsg: NSG-USE2-10.205.0.62_26-ADMIN-CORE-CORP-SNET
+
+################################################################
+
+#ExpressRoute
+
+circuit-name: EXPRT-USE-CORE-CORP
+service-provider: Equinix
+peering-location: "Washington DC"
+bandwidth: 500
+
+#sku
+tier: Premium
+family: MeteredData
+
+############## ER Gateway #############
+
+exprt_vng_name: ergateway-use-core-corp
+gateway-type: ExpressRoute
+vpn-type: RouteBased
+enable-bgp: true
+gateway-sku: Standard
+vngwpip-name: az-Centralus-vngw-exproute-dyn-pip
+vngw-private-ip-alloc: Dynamic
+pip-sku: Basic
+pip-alloc-method: Dynamic
+vngw-private-ip-alloc: Dynamic
+vngw-private-ip-alloc1: Dynamic
+
+##############################################################
+
+#VPN
+
+vng_name: VPNGW-CORP-USE
+vng_pip: VNGGWPIP-CORP-USE
+vng_pip2: VNGGWPIP2-CORP-USE
+gateway-type1: VPN
+vpn-sku: VpnGw3
+active_active: false
+enable-bgp: true
+vngw-private-ip-alloc2: Dynamic
+vnetipconfig: vnetGatewayConfig
+vnetipconfig2: vnetGatewayConfig1
+localgw: LGW-CORE-CORP-USE-HOUSTON
+localgw2: LGW-CORE-CORP-USE-HANOVER
+netgw: VPN-CORE-CORP-USE-HOUSTON
+netgw2: VPN-CORE-CORP-USE-HANOVER
+gateway_address: "208.46.106.14" #LOCATION1
+gateway_address2: "198.54.171.14" #LOCATION2
+localnetgateway1: ["10.14.56.100/32"]
+localnetgateway2: ["10.20.55.100/32"]
+netgateconntype: IPsec
+presharedkey: 4-v3ry-53cr37-1p53c-5h4r3d-k3y
+
+###################################################
+# Peering
+###################################################
+
+networking:
+# Hub VNET details for peerings, leave blank if not creating peerings.
+hubvnet_name: shs-prd-us-northcentral-vnet_10.205.0.0_22
+hubvnet_rg: shs-prd-northcentralus-connectivity-rg
+# Settings for the spoke network:
+vnet1:
+hub-vnet-1-peername: hubtomonitor
+vnet-1-hub-peername: monitortohub
+enabled: true
+name: CDW-PD-USSCZ-PROD-VNET-01_10.32.68.0_22
+subnet1: 
+enabled: true
+name: CDW-PD-USSCZ-PROD-SNET-10.32.68.0_26
+address_prefix: "10.32.68.0/26"
+nsg_name: CDW-PD-USSCZ-PROD-SNET-NSG-01
+subnet2: 
+enabled: true
+name: CDW-PD-USSCZ-PROD-SNET-10.32.68.64_26
+address_prefix: "10.32.68.64/26"
+nsg_name: CDW-PD-USSCZ-PROD-SNET-NSG-02
+subnet3: 
+enabled: true
+name: CDW-PD-USSCZ-PROD-SNET-10.32.68.128_26
+address_prefix: "10.32.68.128/26"
+nsg_name: CDW-PD-USSCZ-PROD-SNET-NSG-03
+hubpeer:
+enabled: true
+network_access: true
+forwarded_traffic: true
+gateway_transit: false
+allow_remote_gateway: false
+# This will build the peer names
+# For example: hubsidename + testsidename = <hubsidename>-<testsidename>
+# The reverse peer will be named <testsidename>-<hubsidename>
+hubsidename: CDW-PD-USSCZ-VNET-001
+vnet1sidename: CDW-PD-USSCZ-PROD-VNET-01
+vnet2:
+enabled: false
+name: n/a
+subnet1: 
+name: n/a
+address_prefix: n/a
+nsg_enabled: false
+nsg_name: n/a
+subnet2: 
+enabled: false
+name: n/a
+address_prefix: n/a
+nsg_enabled: false
+nsg_name: n/a
+hubpeer:
+enabled: false
+network_access: true
+forwarded_traffic: true
+gateway_transit: true
+allow_remote_gateway: true
+# This will build the peer names
+# For example: hubsidename + testsidename = <hubsidename>-<testsidename>
+# The reverse peer will be named <testsidename>-<hubsidename>
+hubsidename: n/a
+vnet2sidename: n/a
+
+## Net Gateway ##
+
+localnetgateway1: ["10.0.0.0/8","172.16.0.0/12"]
+localnetgateway2: ["10.254.63.73/32"]
+netgateconntype: IPsec
+vpngeneration: Generation2
+vpnasn: 65203
+netgwasn: 65201
+netgw_bgp_peer: "172.16.250.240"
+pip-sku: Basic
+pip-alloc-method: Dynamic
+vpn-type: RouteBased
+vngw-private-ip-alloc: Dynamic
+
+###############################################################
+
+#Storage
+
+storagename: CRSDGcorpsCUS01
+  
+storage_account:
+  storage_account:
+  replication: lr
+  account_tier: Standard
+  access_tier: Hot
+  replication_type: LRS
+  kind: StorageV2
+  public_container_name: reactbundles
+  public_container_access: blob
+  private_container_name: private
+  private_container_access: private
+  enable_https_traffic_only: true
+
+ ################################################################ 
+ #Domain Controller
+
+nicname: NICNA5PCGDC
+ipname: PIPNA5PCGDC
+domaincontroller1: NA5PCGDC
+storagediskname: SEIHUBCUSPSTORDISK
+ipallocationtype: Dynamic
+dcip: ['10.205.0.230','10.205.0.231']
+vmsize: Standard_B2s
+deletedatadisk: true
+publisher: MicrosoftWindowsServer
+skuwindows: 2019-Datacenter
+offer: WindowsServer
+version: latest
+create_option: FromImage
+managed_disk_type: Premium_LRS
+provision_vm_agent: true
+enable_automatic_upgrades: true
+workspaceId: 92f470af-2364-497d-b382-66fbd877a37d
+workspaceKey: xH51UIuIw125iBxcVyjzvA3uiE8krIgK6YCH10Qy0URq7ep2uF6QtFmQkcFBqreO+bBlbsWGbGIHCwI/E1/KkA==
+
+############################################################################
+
+# Windows DNS Server
+
+dnsname: CRSDG-HUB-CUS-P-WINDNS
+dnsnicname: CRSDG-HUB-CUS-P-WINDNS-NIC
+ipname: CRSDG-HUB-CUS-P-WINDNS-PIP
+ipallocationtype: Dynamic
+dnsip: ['10.205.0.232','10.205.0.233']
+dnsvmsize: Standard_B2s
+dnsdeletedatadisk: true
+provision_vm_agent: true
+enable_automatic_upgrades: true
+workspaceId: 92f470af-2364-497d-b382-66fbd877a37d
+workspaceKey: xH51UIuIw125iBxcVyjzvA3uiE8krIgK6YCH10Qy0URq7ep2uF6QtFmQkcFBqreO+bBlbsWGbGIHCwI/E1/KkA==
+
+##############################################################################
+
+# Windows Virtual Machine
+nicname1: NIC-WIN-CORP-PROD-CUS
+ipname1: PIP-WIN-CORP-PROD-CUS
+winsys: WINCORPPRODCUS
+storagediskname1: WIN-STORDISK-CORP-PROD-CUS
+
+##############################################################################
+
+
+#UDR Routing
+
+routetablename: azpublicroutetable
+routename: route
+routeaddressprefix: 10.205.2.192/26
+routenexthop: VirtualAppliance
+routenexthopaddress: "0.0.0.0"
+
+################################################################ 
+
+#Monitoring Agent
+
+mmaname: mma
+#mmapublisher: Microsoft.Azure.Extensions
+#mmatype: CustomScript
+mmapublisher: Microsoft.EnterpriseCloud.Monitoring
+mmatype: MicrosoftMonitoringAgent
+type_handler_version: "1.0"
+antiname: ANTIVDNS
+antipublisher: Microsoft.Azure.Security
+antitype: IaaSAntimalware
+antihandler_version: "1.3"
+antiupgrade: true
+################################################################
+
+#Encyrpt DNS Servers
+
+encryptkvname: ENCRYKV
+encryptname: ENCRYDNS
+
+################################################################
+# Virtual Machine Backup Policy
+
+bkupvmpolicy: BKUPVM-CORE-CORP-USE
+timezone: UTC
+backupfrequency: Daily
+backuptime: "23:00"
+retentiondailycount: 10
+retentionweeklycount: 42
+retentionweeklyweekdays: ["Sunday", "Wednesday", "Friday", "Saturday"]
+retentionmonthlycount: 7
+retentionmonthlyweekdays: ["Sunday", "Wednesday"]
+retentionmonthlyweeks: ["First", "Last"]
+retentionyearlycount: 77
+
+
+################################################################
+#SQL PaaS Database
+
+sqlname: sql-azure-core-use
+sqllocation: Centralus
+sqlversion: "12.0"
+sqladmin_login: 4dm1n157r470r
+sqladmin_password: 4-v3ry-53cr37-p455w0rd
+sqldbname: sqldb-azure-core-use
+
+################################################################
+#Automation Account
+
+autoacct: AA-CORE-CORP-USE500
+autosku: Basic
+autolocation: Centralus2
+autolocation2: Centralus
+
+################################################################
+#Net Flow Log
+
+netwatchname: netwatcher
+netflowenable1: true
+retentionenabled1: true
+netflowretentiondays1: 30
+netflowtrafficenable1: false
+netflowintervalminutes1: 10
+netflowenable2: true
+retentionenabled2: true
+netflowretentiondays2: 30
+netflowtrafficenable2: false
+netflowintervalminutes2: 10
+
+################################################################ 
+#Availability Set
+
+name: AV-CORP-USE-ADDS500
+managed: true
+
+#######################################################################
+############## Network Security Group Diagnotic Settings ##############
+
+namensg1: nsg-1diag
+namensg2: nsg-2diag
+days: 90
+enabled: true
+
+################################################################ 
+
+  # Update Tags to be applied to all resources
+tags:
+  Application: Infrastructure
+  Technical-Contact: Cloud-infr-CRSDG@outlook.com
+  Environment: CORP
+  Project Code: 709146

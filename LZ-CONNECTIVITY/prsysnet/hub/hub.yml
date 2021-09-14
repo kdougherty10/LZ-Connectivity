@@ -1,0 +1,138 @@
+
+ trigger:
+ - none
+
+ pool: 
+  vmImage: 'ubuntu-latest'
+
+ variables:
+  terraform_version: 1.0.0
+  workspace: sharedservicescentralus
+
+ stages:
+  - stage: Build
+    displayName: Build plan
+    jobs:
+        - deployment: Build
+          environment: 'terraform_plan'
+          strategy:
+           runOnce:
+            deploy:
+              
+              steps:
+                - checkout: self
+                - script: |
+                      wget --quiet https://releases.hashicorp.com/terraform/$(terraform_version)/terraform_$(terraform_version)_linux_amd64.zip
+                      unzip terraform_$(terraform_version)_linux_amd64.zip
+                      rm terraform_$(terraform_version)_linux_amd64.zip
+                      chmod +x terraform
+                  displayName: 'Install Terraform'
+
+                - task: AzureCLI@1
+                  inputs:
+                    azureSubscription: 'Crashdog'
+                    addSpnToEnvironment: true
+                    scriptLocation: inlineScript
+                    failOnStandardError: false
+                    inlineScript: |
+                      echo "##vso[task.setvariable variable=ARM_SUBSCRIPTION_ID]$(az account show --query="id" -o tsv)"
+                      echo "##vso[task.setvariable variable=ARM_CLIENT_ID]${servicePrincipalId}"
+                      echo "##vso[task.setvariable variable=ARM_CLIENT_SECRET]${servicePrincipalKey}"
+                      echo "##vso[task.setvariable variable=ARM_TENANT_ID]$(az account show --query="tenantId" -o tsv)"
+                      echo "##vso[task.setvariable variable=ARM_ACCESS_KEY]$(az storage account keys list -n lurietestsa --query=value -o tsv)"
+                  displayName: 'Setup Authentication'  
+
+                  
+                # Run Terraform Init
+                - script: |
+                    cd  '$(Build.Repository.LocalPath)/prsysnet/hub/terraform'
+                        $(Build.Repository.LocalPath)/terraform init -no-color -input=false
+                  displayName: 'Install Init'
+
+                # Select Terraform Workspace
+                - script: |
+                    cd  '$(Build.Repository.LocalPath)/prsysnet/hub/terraform'
+                        $(Build.Repository.LocalPath)/terraform init -no-color -input=false 
+                        $(Build.Repository.LocalPath)/terraform workspace new $(workspace)
+                        $(Build.Repository.LocalPath)/terraform workspace select $(workspace)
+                  displayName: 'Terraform Workspace Select'
+
+                # Run Terraform Plan
+                - script: |
+                    export TF_IN_AUTOMATION=true
+                    export TF_VAR_subscription_id="$(ARM_SUBSCRIPTION_ID)"
+                    export TF_VAR_client_id="$(ARM_CLIENT_ID)"
+                    export TF_VAR_client_secret="$(ARM_CLIENT_SECRET)"
+                    export TF_VAR_tenant_id="$(ARM_TENANT_ID)"
+                    export TF_VAR_tenant_id="$(ARM_ACCESS_KEY)"
+                    $(Build.Repository.LocalPath)/terraform plan -out=$(Build.Repository.LocalPath)/prsysnet/hub/terraform/tfplan -no-color -input=false
+                  displayName: 'Terraform Plan'
+                  workingDirectory: $(Build.Repository.LocalPath)/prsysnet/hub/terraform
+                  enabled: true
+
+
+  - stage: Apply
+    displayName: Apply plan
+    jobs:
+    - deployment: TerraformApply
+      environment: 'terraform_apply'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+                - checkout: self
+                - script: |
+                      wget --quiet https://releases.hashicorp.com/terraform/$(terraform_version)/terraform_$(terraform_version)_linux_amd64.zip
+                      unzip terraform_$(terraform_version)_linux_amd64.zip
+                      rm terraform_$(terraform_version)_linux_amd64.zip
+                      chmod +x terraform
+                      ls -l terraform
+                  displayName: Install Terraform 
+
+                - task: AzureCLI@1
+                  inputs:
+                    azureSubscription: 'Crashdog'
+                    addSpnToEnvironment: true
+                    scriptLocation: inlineScript
+                    failOnStandardError: false
+                    inlineScript: |
+                      echo "##vso[task.setvariable variable=ARM_SUBSCRIPTION_ID]$(az account show --query="id" -o tsv)"
+                      echo "##vso[task.setvariable variable=ARM_CLIENT_ID]${servicePrincipalId}"
+                      echo "##vso[task.setvariable variable=ARM_CLIENT_SECRET]${servicePrincipalKey}"
+                      echo "##vso[task.setvariable variable=ARM_TENANT_ID]$(az account show --query="tenantId" -o tsv)"
+                      echo "##vso[task.setvariable variable=ARM_ACCESS_KEY]$(az storage account keys list -n lurietestsa --query=value -o tsv)"
+                         
+
+                  displayName: Install Terraform and Python with respective modules
+                # Run Terraform Init
+                - script: |
+                    cd  '$(Build.Repository.LocalPath)/prsysnet/hub/terraform'
+                        $(Build.Repository.LocalPath)/terraform init -no-color -input=false
+
+                # Select Terraform Workspace
+                - script: |
+                    cd  '$(Build.Repository.LocalPath)/prsysnet/hub/terraform'
+                        $(Build.Repository.LocalPath)/terraform init -no-color -input=false 
+                        $(Build.Repository.LocalPath)/terraform workspace new $(workspace)
+                        $(Build.Repository.LocalPath)/terraform workspace select $(workspace)
+                  displayName: 'Terraform Workspace Select'
+
+                # Run Terraform Plan
+                - script: |
+                    export TF_IN_AUTOMATION=true
+                    export TF_VAR_subscription_id="$(ARM_SUBSCRIPTION_ID)"
+                    export TF_VAR_client_id="$(ARM_CLIENT_ID)"
+                    export TF_VAR_client_secret="$(ARM_CLIENT_SECRET)"
+                    export TF_VAR_tenant_id="$(ARM_TENANT_ID)"
+                    export TF_VAR_tenant_id="$(ARM_ACCESS_KEY)"
+                    $(Build.Repository.LocalPath)/terraform plan -out=$(Build.Repository.LocalPath)/prsysnet/hub/terraform/tfplan -no-color -input=false
+                  displayName: 'Terraform Plan'
+                  workingDirectory: $(Build.Repository.LocalPath)/prsysnet/hub/terraform
+                  enabled: true
+
+                # Run Terraform Apply
+                - script: |
+                    $(Build.Repository.LocalPath)/terraform apply -no-color -input=false -auto-approve tfplan
+                  displayName: 'Terraform Apply'
+                  workingDirectory: $(Build.Repository.LocalPath)/prsysnet/hub/terraform
+                  enabled: true
