@@ -1,0 +1,141 @@
+##############################################################
+######## Update these values for your new environment ########
+##############################################################
+# Tenant/Subscription Configurations
+tenant_id: 6660b467-add3-4d9e-8ada-48b1721959f3
+subscription_id: 270086d6-d0b4-4c74-87dc-44ad8c9b6fed
+sharedservices_id: 270086d6-d0b4-4c74-87dc-44ad8c9b6fed
+
+############################################
+############ RG Identifiers ################
+#Do Not Change - These build the appropriate 
+#RG names in the main.tf
+#Note:  service entry should match the 
+#abbreviation for the subcsription you are deploying to
+
+type: SPOKE
+org: CORP
+locationtype: USE2
+nettype: VNET
+cloudtype: ADMIN
+service: PROD  
+rg: RG
+
+##########################################
+############## Location ##################
+
+location: eastus2
+
+########################################
+############## Networking ##############
+
+vnet-1: VNET-PROD-CORP-USE-SPOKE_10.205.160.0_24
+vnet-1-subnet1: PROD-CORP-USE2-TIER1-SUBNET_10.205.160.0_26
+vnet-1-subnet2: PROD-CORP-USE2-TIER2-SUBNET_10.205.160.64_26
+vnet-1-subnet3: PROD-CORP-USE2-TIER3-SUBNET_10.205.160.128_26
+vnet-1-address_space: ["10.205.160.0/24"]
+
+vnet-1-subnet1-address_prefix:  "10.205.160.0/26"
+vnet-1-subnet2-address_prefix: "10.205.160.64/26"
+vnet-1-subnet3-address_prefix:  "10.205.160.128/26"
+
+vnet-1-hub-peername: VNET-PROD-CORP-USE2-SPOKE_10.205.160.0_24-VNET-CORE-CORP-USE2-HUB_10.205.0.0_20
+hub-vnet-1-peername: VNET-CORE-CORP-USE2-HUB_10.205.0.0_20-VNET-PROD-CORP-USE2-SPOKE_10.205.160.0_24
+
+#NetworkSecurityGroup - will need 2 of these for the subnets
+nsg-1: UAT-CORP-USE2-TIER1-SUBNETNSG_10.205.160.0_26
+nsg-2: UAT-CORP-USE2-TIER2-SUBNETNSG_10.205.160.64_26
+nsg-3: UAT-CORP-USE2-TIER3-SUBNETNSG_10.205.160.128_26
+
+lock: PROD-CORP-USE2-SPOKE-RG_LOCK
+lock_level: CanNotDelete
+notes: This resource group is shared, please confirm before deleting.
+
+################################################################ 
+
+ # Windows Virtual Machine
+nicname: NIC-WIN-CORP-PROD-USE
+ipname: PIP-WIN-CORP-PROD-USE
+domaincontroller1: WINCORPPRODUSE
+storagediskname: WIN-STORDISK-CORP-PROD-USE
+ipallocationtype: Dynamic
+vmsize: Standard_B2s
+deletedatadisk: true
+publisher: MicrosoftWindowsServer
+skuwindows: 2016-Datacenter
+offer: WindowsServer
+version: latest
+create_option: FromImage
+managed_disk_type: Premium_LRS
+provision_vm_agent: true
+enable_automatic_upgrades: true
+################################################################ 
+
+# Linux Virtual Machine
+
+linuxnicname: NIC-LINUX-CORP-PROD-USE
+linuxipname: PIP-LINUX-CORP-PROD-USE
+linuxvmname:  LINUXCORPPRODUSE
+linuxstoragediskname: LINUX-STORDISK-CORP-PROD-USE
+linuxipallocationtype: Dynamic
+linuxvmsize: Standard_B2s
+linuxdeletedatadisk: true
+linuxpublisher: Canonical
+linuxskuwindows: 16.04-LTS
+linuxoffer: UbuntuServer
+linuxversion: latest
+linuxcreate_option: FromImage
+linuxmanaged_disk_type: Premium_LRS
+linuxprovision_vm_agent: true
+linuxenable_automatic_upgrades: true
+
+################################################################
+
+#Monitoring Agent
+
+mmaname: mma
+#mmapublisher: Microsoft.Azure.Extensions
+#mmatype: CustomScript
+mmapublisher: Microsoft.EnterpriseCloud.Monitoring
+mmatype: MicrosoftMonitoringAgent
+type_handler_version: "1.0"
+antiname: antiv
+antipublisher: Microsoft.Azure.Security
+antitype: IaaSAntimalware
+antihandler_version: "1.3"
+antiupgrade: true
+################################################################
+
+#UDR Routing
+
+routetablename: azsubnetroutetable
+routename: route
+routeaddressprefix: 10.192.8.0/26
+routenexthop: VirtualAppliance
+routenexthopaddress: "0.0.0.0"
+
+################################################################ 
+
+#########################################
+############## For Peering ##############
+
+hubrg: ALL-CORP-USE2-VNET-RG
+hubvnet: CORE-CORP-USE2-HUB-VNET_10.205.0.0_20
+
+network_access: true
+forwarded_traffic: true
+gateway_transit: false
+remotegateway: false
+hubgateway_transit: true
+
+###################################################
+##################### Tags ########################
+# Update Tags to be applied to all resources
+
+tags:
+  Application: Infrastructure
+  Technical-Contact: Cloud-infr-oil@oceaneering.com
+  Environment: Core East
+  Project Code: 709146
+
+  
